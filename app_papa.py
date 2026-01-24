@@ -1,7 +1,7 @@
 import streamlit as st
 from datetime import datetime
 
-# Masquer les menus Streamlit pour faire plus "Appli"
+# Masquer les menus Streamlit
 st.set_page_config(page_title="Suivi Portfolio", page_icon="📈")
 st.markdown("""
     <style>
@@ -9,6 +9,8 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
     .block-container {padding-top: 2rem;}
+    /* Centrer le texte dans le champ de saisie */
+    input {text-align: center !important;}
     </style>
     """, unsafe_allow_html=True)
 
@@ -29,14 +31,22 @@ def creer_bloc(titre, valeur, couleur_texte="#1976D2"):
     """, unsafe_allow_html=True)
 
 # --- AFFICHAGE ---
-# Bloc 1 : Investi
+
+# Bloc 1 : Investi (Déjà ok)
 creer_bloc("MONTANT INVESTI", f"{investi:.2f} €")
 
-# Bloc 2 : Saisie (On garde le widget Streamlit mais on le centre)
-st.markdown("<div style='text-align: center; color: #1565C0; font-weight: bold; font-size: 14px;'>MONTANT ACTUEL (€)</div>", unsafe_allow_html=True)
+# Bloc 2 : Saisie avec CADRE
+# On ouvre le div du cadre manuellement pour mettre le widget dedans
+st.markdown("""
+    <div style="border: 2px solid #1565C0; border-radius: 10px; padding: 15px; margin-bottom: 10px; text-align: center; background-color: white;">
+        <div style="color: #1565C0; font-weight: bold; font-size: 14px; margin-bottom: 5px;">MONTANT ACTUEL (€)</div>
+    """, unsafe_allow_html=True)
+
 actuel = st.number_input("Label caché", label_visibility="collapsed", value=59.57, step=0.01)
 
-# Bloc 3 : Performance
+st.markdown("</div>", unsafe_allow_html=True)
+
+# Bloc 3 : Performance (Déjà ok)
 diff = actuel - investi
 pourcent = (diff / investi) * 100 if investi != 0 else 0
 couleur_perf = "green" if diff >= 0 else "red"
