@@ -2,13 +2,14 @@ import streamlit as st
 from datetime import datetime
 import os
 
-# 1. CONFIGURATION ET STYLE
+# 1. CONFIGURATION ET STYLE (FORCE LE CENTRAGE)
 st.set_page_config(page_title="Suivi Portfolio", layout="centered")
 
 st.markdown("""
     <style>
     header, footer, #MainMenu {visibility: hidden;}
     .block-container {padding-top: 2rem;}
+    
     .cadre-titre {
         border: 2px solid #1565C0;
         border-radius: 8px;
@@ -19,21 +20,23 @@ st.markdown("""
     }
     .titre-texte { color: #1565C0; font-weight: bold; font-size: 16px; }
     .montant-style { text-align: center; font-size: 28px; font-weight: bold; color: #1976D2; margin-bottom: 20px; }
+    
+    /* STYLE DU BOUTON - FORCE LE CENTRAGE ABSOLU */
+    .stButton {
+        display: flex;
+        justify-content: center;
+    }
+    .stButton > button {
+        background-color: #1565C0 !important;
+        color: white !important;
+        font-weight: bold !important;
+        border-radius: 10px !important;
+        padding: 10px 30px !important;
+        border: none !important;
+    }
+
     input { text-align: center !important; font-size: 28px !important; font-weight: bold !important; color: #1976D2 !important; }
     div[data-baseweb="input"] { border: none !important; background-color: transparent !important; }
-    
-    /* Style pour le bouton centré */
-    div.stButton > button {
-        display: block;
-        margin: 0 auto;
-        background-color: #1565C0;
-        color: white;
-        font-weight: bold;
-        padding: 10px 20px;
-        border-radius: 10px;
-        border: none;
-        width: 100%;
-    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -71,13 +74,10 @@ st.markdown('<div class="cadre-titre"><div class="titre-texte">MONTANT ACTUEL (�
 montant_charge = charger_montant()
 actuel = st.number_input("Saisie", label_visibility="collapsed", value=montant_charge, step=0.01)
 
-# BOUTON CENTRÉ
-# On crée 3 colonnes, le bouton est dans celle du milieu pour le centrage visuel
-col1, col2, col3 = st.columns([1, 2, 1])
-with col2:
-    if st.button("💾 ENREGISTRER"):
-        sauver_montant(actuel)
-        st.toast("✅ Montant sauvegardé !") # Un petit message discret en bas
+# LE BOUTON (SANS COLONNES, LE CSS S'OCCUPE DE TOUT)
+if st.button("💾 ENREGISTRER"):
+    sauver_montant(actuel)
+    st.toast("✅ Montant sauvegardé !")
 
 # BLOC 3
 st.markdown('<div class="cadre-titre"><div class="titre-texte">PERFORMANCE</div></div>', unsafe_allow_html=True)
