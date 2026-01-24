@@ -1,10 +1,16 @@
 import streamlit as st
 from datetime import datetime
 
-# Configuration de la page
-st.set_page_config(page_title="Suivi Investissement", page_icon="📈")
-
-st.markdown("<h2 style='text-align: center; color: #1976D2;'>MON SUIVI 2026</h2>", unsafe_allow_html=True)
+# Masquer les menus Streamlit pour faire plus "Appli"
+st.set_page_config(page_title="Suivi Portfolio", page_icon="📈")
+st.markdown("""
+    <style>
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    .block-container {padding-top: 2rem;}
+    </style>
+    """, unsafe_allow_html=True)
 
 # --- CALCULS ---
 date_depart = datetime(2026, 1, 1)
@@ -13,20 +19,33 @@ nb_mois = (aujourdhui.year - date_depart.year) * 12 + (aujourdhui.month - date_d
 if aujourdhui.day < 2: nb_mois -= 1
 investi = 63.85 + (nb_mois * 35)
 
-# --- INTERFACE ---
-st.info(f"**MONTANT INVESTI** : {investi:.2f} €")
-
-actuel = st.number_input("**MONTANT ACTUEL (€)**", value=59.57, step=0.01)
-
-if actuel:
-    diff = actuel - investi
-    perf = (diff / investi) * 100 if investi != 0 else 0
-    couleur = "green" if diff >= 0 else "red"
-    
+# --- DESIGN DES BLOCS ---
+def creer_bloc(titre, valeur, couleur_texte="#1976D2"):
     st.markdown(f"""
-    <div style="border: 2px solid #1976D2; border-radius: 10px; padding: 20px; text-align: center;">
-        <h3 style="color: #1976D2;">PERFORMANCE</h3>
-        <h2 style="color: {couleur};">{perf:+.2f} %</h2>
-        <h4 style="color: {couleur};">{diff:+.2f} €</h4>
+    <div style="border: 2px solid #1565C0; border-radius: 10px; padding: 15px; margin-bottom: 10px; text-align: center; background-color: white;">
+        <div style="color: #1565C0; font-weight: bold; font-size: 14px; margin-bottom: 5px;">{titre}</div>
+        <div style="color: {couleur_texte}; font-weight: bold; font-size: 24px;">{valeur}</div>
     </div>
     """, unsafe_allow_html=True)
+
+# --- AFFICHAGE ---
+# Bloc 1 : Investi
+creer_bloc("MONTANT INVESTI", f"{investi:.2f} €")
+
+# Bloc 2 : Saisie (On garde le widget Streamlit mais on le centre)
+st.markdown("<div style='text-align: center; color: #1565C0; font-weight: bold; font-size: 14px;'>MONTANT ACTUEL (€)</div>", unsafe_allow_html=True)
+actuel = st.number_input("Label caché", label_visibility="collapsed", value=59.57, step=0.01)
+
+# Bloc 3 : Performance
+diff = actuel - investi
+pourcent = (diff / investi) * 100 if investi != 0 else 0
+couleur_perf = "green" if diff >= 0 else "red"
+signe = "+" if diff >= 0 else ""
+
+st.markdown(f"""
+<div style="border: 2px solid #1565C0; border-radius: 10px; padding: 15px; text-align: center; background-color: white;">
+    <div style="color: #1565C0; font-weight: bold; font-size: 14px; margin-bottom: 5px;">PERFORMANCE</div>
+    <div style="color: {couleur_perf}; font-weight: bold; font-size: 24px;">{signe}{pourcent:.2f} %</div>
+    <div style="color: {couleur_perf}; font-weight: bold; font-size: 20px;">{signe}{diff:.2f} €</div>
+</div>
+""", unsafe_allow_html=True)
