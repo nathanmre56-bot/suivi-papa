@@ -1,40 +1,44 @@
 import streamlit as st
 from datetime import datetime
 
-# 1. STYLE GLOBAL (Pour forcer le look Appli)
-st.set_page_config(page_title="Suivi Portfolio", page_icon="📈")
+# 1. CONFIGURATION ET FORCE DU DESIGN
+st.set_page_config(page_title="Suivi Portfolio", layout="centered")
+
 st.markdown("""
     <style>
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
+    header, footer, #MainMenu {visibility: hidden;}
     .block-container {padding-top: 2rem;}
     
-    /* Le style des cadres bleus */
-    .mon-cadre {
+    /* Le cadre bleu unique pour chaque section */
+    .cadre-unique {
         border: 2px solid #1565C0;
-        border-radius: 10px;
-        padding: 15px;
+        border-radius: 12px;
+        padding: 20px;
         margin-bottom: 15px;
         text-align: center;
         background-color: white;
     }
+    
     .titre-bleu {
         color: #1565C0;
         font-weight: bold;
         font-size: 14px;
+        text-transform: uppercase;
         margin-bottom: 5px;
     }
-    /* Supprimer le design gris de Streamlit pour l'input */
+
+    /* Force la zone de saisie Streamlit à devenir invisible et à remonter */
     div[data-baseweb="input"] {
-        border: none !important;
         background-color: transparent !important;
+        border: none !important;
+        margin-top: -15px !important; /* Aspire le montant dans le cadre */
     }
+    
     input {
         text-align: center !important;
+        font-size: 28px !important;
         font-weight: bold !important;
         color: #1976D2 !important;
-        font-size: 24px !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -48,19 +52,19 @@ investi = 63.85 + (nb_mois * 35)
 
 # --- 3. AFFICHAGE ---
 
-# BLOC 1 : MONTANT INVESTI
+# BLOC 1 : INVESTI
 st.markdown(f"""
-    <div class="mon-cadre">
-        <div class="titre-bleu">MONTANT INVESTI</div>
-        <div style="color: #1976D2; font-weight: bold; font-size: 24px;">{investi:.2f} €</div>
+    <div class="cadre-unique">
+        <div class="titre-bleu">Montant Investi</div>
+        <div style="color: #1976D2; font-size: 28px; font-weight: bold;">{investi:.2f} €</div>
     </div>
-    """, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
-# BLOC 2 : MONTANT ACTUEL (Le widget est ici "injecté" proprement)
-with st.container():
-    st.markdown('<div class="mon-cadre"><div class="titre-bleu">MONTANT ACTUEL (€)</div>', unsafe_allow_html=True)
-    actuel = st.number_input("Saisie", label_visibility="collapsed", value=59.57, step=0.01)
-    st.markdown('</div>', unsafe_allow_html=True)
+# BLOC 2 : ACTUEL (SAISIE DANS LE CADRE)
+st.markdown('<div class="cadre-unique"><div class="titre-bleu">Montant Actuel (€)</div>', unsafe_allow_html=True)
+# La saisie est placée ici, le CSS 'margin-top' la fera remonter dans le div ci-dessus
+actuel = st.number_input("Saisie", label_visibility="collapsed", value=59.57, step=0.01)
+st.markdown('</div>', unsafe_allow_html=True)
 
 # BLOC 3 : PERFORMANCE
 diff = actuel - investi
@@ -69,9 +73,9 @@ couleur_perf = "green" if diff >= 0 else "red"
 signe = "+" if diff >= 0 else ""
 
 st.markdown(f"""
-    <div class="mon-cadre">
-        <div class="titre-bleu">PERFORMANCE</div>
-        <div style="color: {couleur_perf}; font-weight: bold; font-size: 24px;">{signe}{pourcent:.2f} %</div>
-        <div style="color: {couleur_perf}; font-weight: bold; font-size: 20px;">{signe}{diff:.2f} €</div>
+    <div class="cadre-unique">
+        <div class="titre-bleu">Performance</div>
+        <div style="color: {couleur_perf}; font-size: 28px; font-weight: bold;">{signe}{pourcent:.2f} %</div>
+        <div style="color: {couleur_perf}; font-size: 22px; font-weight: bold;">{signe}{diff:.2f} €</div>
     </div>
-    """, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
