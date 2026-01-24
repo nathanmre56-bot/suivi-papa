@@ -21,17 +21,33 @@ st.markdown("""
     .montant-style { text-align: center; font-size: 28px; font-weight: bold; color: #1976D2; margin-bottom: 20px; }
     input { text-align: center !important; font-size: 28px !important; font-weight: bold !important; color: #1976D2 !important; }
     div[data-baseweb="input"] { border: none !important; background-color: transparent !important; }
+    
+    /* Style pour le bouton centré */
+    div.stButton > button {
+        display: block;
+        margin: 0 auto;
+        background-color: #1565C0;
+        color: white;
+        font-weight: bold;
+        padding: 10px 20px;
+        border-radius: 10px;
+        border: none;
+        width: 100%;
+    }
     </style>
     """, unsafe_allow_html=True)
 
-# --- 2. GESTION DE LA SAUVEGARDE (Fichier Local) ---
+# --- 2. GESTION DE LA SAUVEGARDE ---
 FICHIER_DATA = "dernier_montant.txt"
 
 def charger_montant():
     if os.path.exists(FICHIER_DATA):
-        with open(FICHIER_DATA, "r") as f:
-            return float(f.read())
-    return 59.57  # Valeur par défaut
+        try:
+            with open(FICHIER_DATA, "r") as f:
+                return float(f.read())
+        except:
+            return 59.57
+    return 59.57
 
 def sauver_montant(valeur):
     with open(FICHIER_DATA, "w") as f:
@@ -46,21 +62,24 @@ investi = 63.85 + (nb_mois * 35)
 
 # --- 4. AFFICHAGE ---
 
-# PARTIE 1 : INVESTI
+# BLOC 1
 st.markdown('<div class="cadre-titre"><div class="titre-texte">MONTANT INVESTI</div></div>', unsafe_allow_html=True)
 st.markdown(f'<div class="montant-style">{investi:.2f} €</div>', unsafe_allow_html=True)
 
-# PARTIE 2 : ACTUEL
+# BLOC 2
 st.markdown('<div class="cadre-titre"><div class="titre-texte">MONTANT ACTUEL (€)</div></div>', unsafe_allow_html=True)
 montant_charge = charger_montant()
 actuel = st.number_input("Saisie", label_visibility="collapsed", value=montant_charge, step=0.01)
 
-# BOUTON DE SAUVEGARDE
-if st.button("💾 ENREGISTRER LE MONTANT"):
-    sauver_montant(actuel)
-    st.success("Montant sauvegardé !")
+# BOUTON CENTRÉ
+# On crée 3 colonnes, le bouton est dans celle du milieu pour le centrage visuel
+col1, col2, col3 = st.columns([1, 2, 1])
+with col2:
+    if st.button("💾 ENREGISTRER"):
+        sauver_montant(actuel)
+        st.toast("✅ Montant sauvegardé !") # Un petit message discret en bas
 
-# PARTIE 3 : PERFORMANCE
+# BLOC 3
 st.markdown('<div class="cadre-titre"><div class="titre-texte">PERFORMANCE</div></div>', unsafe_allow_html=True)
 diff = actuel - investi
 pourcent = (diff / investi) * 100 if investi != 0 else 0
